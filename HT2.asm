@@ -1,0 +1,19 @@
+.MODEL SMALL
+.STACK 100H
+.CODE
+MAIN PROC
+    MOV AX,86B1H
+    MOV BX,3F42H
+    SUB AX,BX
+    JO OVER 
+    MOV CX,1
+    
+    OVER:
+    MOV CX,0H
+    JMP EXIT
+    
+    EXIT:
+    MOV AH,4CH
+    INT 21H
+    MAIN ENDP
+END MAIN

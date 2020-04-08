@@ -1,0 +1,62 @@
+.MODEL SMALL
+.STACK 100H
+.DATA
+N DW 4
+BYT DW 2
+I DW ?
+J DW ?
+MATRIX DW 1,5,9,13
+       DW 2,6,10,14    ;TAKING THE MEMBERS OF THE MATRIX AS WORD TYPE VARIABLE
+       DW 3,7,11,15
+       DW 4,8,12,16    ;ROW MAJOR     
+.CODE
+MAIN PROC
+    MOV AX,@DATA
+    MOV DS, AX  
+    XOR BX,BX
+    XOR DX,DX
+    XOR SI,SI
+    MOV CX,0H
+    ROW:
+    PUSH CX        ;COUNTER FOR OUTER LOOP IS PUSHED
+    MOV AX, CX     ;CX VALUE IS TAKEN IN AX FOR MULTIPLICATION BY 2, FOR WORD
+    XOR DX,DX
+    MUL BYT
+    MOV I, AX       ;(I-1)*2 IS STORED IN I
+    XOR DX,DX
+    COLUMN:
+    MOV AX, CX
+    XOR DX,DX
+    MUL BYT
+    MOV J, AX       ;(J-1)*2 IS STORED IN J
+    MOV SI, AX
+    MOV AX, I
+    MUL N
+    MOV BX, AX
+    MOV AX, MATRIX[BX][SI]
+    PUSH SI         ;SI VALUE IS PUSHED
+    PUSH BX         ;THE BX VALUE IS PUSHED          
+    PUSH AX         ;VALUE IS KEPT IN STACK
+    MOV SI, I
+    MOV AX, J
+    MUL N
+    MOV BX,AX
+    MOV DX, MATRIX[BX][SI]
+    POP AX
+    MOV MATRIX[BX][SI], AX
+    POP BX
+    POP SI
+    MOV MATRIX[BX][SI], DX
+    INC CX
+    CMP CX, N
+    JNE COLUMN
+    
+    POP CX
+    INC CX
+    CMP CX, N
+    JNE ROW
+    
+    MOV AH, 4CH
+    INT 21H
+    MAIN ENDP
+END MAIN
